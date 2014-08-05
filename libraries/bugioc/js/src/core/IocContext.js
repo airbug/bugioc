@@ -193,7 +193,7 @@ require('bugpack').context("*", function(bugpack) {
              * @private
              * @type {boolean}
              */
-            this.starting                               = false;
+            this.started                                = false;
         },
 
 
@@ -234,8 +234,8 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @return {boolean}
          */
-        getStarting: function() {
-            return this.starting;
+        getStarted: function() {
+            return this.started;
         },
 
 
@@ -267,8 +267,8 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @return {boolean}
          */
-        isStarting: function() {
-            return this.getStarting();
+        isStarted: function() {
+            return this.getStarted();
         },
 
 
@@ -365,13 +365,16 @@ require('bugpack').context("*", function(bugpack) {
          */
         startContext: function() {
             var _this = this;
-            this.invalidateModulesStarted(function(throwable) {
-                if (!throwable) {
-                    _this.contextStateMachine.changeState(IocContext.ContextState.RUNNING);
-                } else {
-                    _this.dispatchThrowable(throwable);
-                }
-            });
+            if (!this.started) {
+                this.started = true;
+                this.invalidateModulesStarted(function (throwable) {
+                    if (!throwable) {
+                        _this.contextStateMachine.changeState(IocContext.ContextState.RUNNING);
+                    } else {
+                        _this.dispatchThrowable(throwable);
+                    }
+                });
+            }
         },
 
         /**
@@ -379,13 +382,16 @@ require('bugpack').context("*", function(bugpack) {
          */
         stopContext: function() {
             var _this = this;
-            this.invalidateModulesStopped(function(throwable) {
-                if (!throwable) {
-                    _this.contextStateMachine.changeState(IocContext.ContextState.READY);
-                } else {
-                    _this.dispatchThrowable(throwable);
-                }
-            });
+            if (this.started) {
+                this.started = false;
+                this.invalidateModulesStopped(function (throwable) {
+                    if (!throwable) {
+                        _this.contextStateMachine.changeState(IocContext.ContextState.READY);
+                    } else {
+                        _this.dispatchThrowable(throwable);
+                    }
+                });
+            }
         },
 
 
@@ -445,7 +451,9 @@ require('bugpack').context("*", function(bugpack) {
             module.configure();
             this.processingModuleList.add(module);
             this.checkIfModuleIsModuleProcessor(module);
-            this.invalidateModulesStarted();
+            if (this.started) {
+                this.invalidateModulesStarted();
+            }
         },
 
         /**
