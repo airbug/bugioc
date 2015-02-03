@@ -347,6 +347,7 @@ require('bugpack').context("*", function(bugpack) {
          * @param {IModuleProcessor} moduleProcessor
          */
         registerModuleProcessor: function(moduleProcessor) {
+            console.log("Registering moduleProcessor");
             if (!Class.doesImplement(moduleProcessor, IModuleProcessor)) {
                 throw new Exception("IllegalArgument", {}, "parameter 'moduleProcessor' must implement IModuleProcessor");
             }
@@ -433,10 +434,17 @@ require('bugpack').context("*", function(bugpack) {
                 var instance        = module.getInstance();
                 if (TypeUtil.isFunction(instance.getClass)) {
                     var moduleClass = instance.getClass();
-                    var moduleTags = bugmeta.getTagsByReference(moduleClass);
+                    var moduleTags = bugmeta.getTagsByReference(moduleClass.getConstructor());
+
+                    //TEST
+                    console.log("Module '", module.getIocModule().getName(), "' tags ");
+
                     moduleTags.forEach(function (moduleTag) {
+
+                        console.log("moduleTag:", moduleTag.getClass().getName());
+
                         if (Class.doesExtend(moduleTag, ModuleProcessorTag)) {
-                            _this.buildModuleProcessor(/** @type {ModuleProcessorTag} */(moduleTag), module);
+                            _this.buildModuleProcessor(/** @type {ModuleProcessorTag} */(moduleTag), instance);
                         }
                     });
                 }
