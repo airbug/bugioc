@@ -434,14 +434,7 @@ require('bugpack').context("*", function(bugpack) {
                 if (TypeUtil.isFunction(instance.getClass)) {
                     var moduleClass = instance.getClass();
                     var moduleTags = bugmeta.getTagsByReference(moduleClass.getConstructor());
-
-                    //TEST
-                    console.log("Module '", module.getIocModule().getName(), "' tags ");
-
                     moduleTags.forEach(function (moduleTag) {
-
-                        console.log("moduleTag:", moduleTag.getClass().getName());
-
                         if (Class.doesExtend(moduleTag, ModuleProcessorTag)) {
                             _this.buildModuleProcessor(/** @type {ModuleProcessorTag} */(moduleTag), instance);
                         }
