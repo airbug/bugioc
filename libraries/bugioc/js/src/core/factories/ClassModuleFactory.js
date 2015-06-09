@@ -95,7 +95,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         factoryModule: function() {
             var moduleArgs      = this.buildModuleArgs();
-            return new Module(this.getIocModule(), this.moduleClass.newInstance(moduleArgs));
+            return new Module(this.getIocModule(), this.moduleClass.newInstanceWithArray(moduleArgs));
         }
     });
 

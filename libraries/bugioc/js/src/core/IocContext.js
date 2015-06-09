@@ -93,9 +93,8 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @constructs
-         * @param {ContextCommandFactory} contextCommandFactory
          */
-        _constructor: function(contextCommandFactory) {
+        _constructor: function() {
 
             this._super();
 
@@ -114,7 +113,7 @@ require('bugpack').context("*", function(bugpack) {
              * @private
              * @type {ContextCommandFactory}
              */
-            this.contextCommandFactory                  = contextCommandFactory;
+            this.contextCommandFactory                  = null;
 
             /**
              * @private
@@ -198,15 +197,15 @@ require('bugpack').context("*", function(bugpack) {
 
 
         //-------------------------------------------------------------------------------
-        // Initializer
+        // Init Methods
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
          * @param {ContextCommandFactory} contextCommandFactory
          */
-        _initializer: function(contextCommandFactory) {
+        init: function(contextCommandFactory) {
             this._super();
+            this.contextCommandFactory = contextCommandFactory;
             this.contextStateMachine.setParentPropagator(this);
             this.moduleValidationMachine.addValidator(IocContext.ValidationTypes.MODULES_STARTED, this.validateModulesStarted, this);
             this.moduleValidationMachine.addValidator(IocContext.ValidationTypes.MODULES_STOPPED, this.validateModulesStopped, this);
@@ -551,7 +550,7 @@ require('bugpack').context("*", function(bugpack) {
          * @param {?function(Module)} processMethod
          * @param {?function(Module)} deprocessMethod
          * @param {Object} context
-         * @returns {MethodModuleProcessor}
+         * @return {MethodModuleProcessor}
          */
         factoryModuleProcessor: function(processMethod, deprocessMethod, context) {
             return new MethodModuleProcessor(processMethod, deprocessMethod, context);
